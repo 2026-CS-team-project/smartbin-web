@@ -1,7 +1,7 @@
 # SmartBin
 
-스마트 쓰레기통 관리 시스템 - ASP.NET Blazor 기반 웹 애플리케이션
-쓰레기통(Bin) 상태 모니터링, 수거 트럭(Truck) 관리, 알림(Alert) 기능
+스마트 쓰레기통 관리 시스템 - ASP.NET Blazor 기반 웹 애플리케이션  
+쓰레기통(Bin) 상태 모니터링, 수거 트럭(Truck) 관리, 알림(Alert) 기능을 제공합니다.
 
 ## 기술 스택
 
@@ -13,9 +13,23 @@
 
 - [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) 이상
 
+## 실행 방법
+
+```bash
+# 저장소 클론
+git clone https://github.com/2026-CS-team-project/smartbin-web.git
+cd smartbin-web
+
+# 패키지 복원 및 실행
+dotnet run
+```
+
+실행 후 터미널에 표시되는 URL(예: `https://localhost:7xxx`)로 브라우저에서 접속합니다.
+
 ## 프로젝트 구조
 
-SmartBin/
+```
+smartbin-web/
 ├── Components/       # Blazor 컴포넌트 및 페이지
 │   └── Pages/        # 라우팅 페이지 (Home, Bins, BinDetail, Alerts)
 ├── Models/           # 데이터 모델 (Bin, Truck, Alert)
@@ -23,3 +37,8 @@ SmartBin/
 ├── wwwroot/          # 정적 파일 (CSS, JS)
 ├── Program.cs        # 애플리케이션 진입점
 └── appsettings.json  # 설정 파일
+```
+
+## 라이선스
+
+MIT
