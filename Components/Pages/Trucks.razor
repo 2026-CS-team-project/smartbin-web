@@ -1,0 +1,39 @@
+@page "/trucks"
+
+<PageTitle>수거차 관리</PageTitle>
+
+<h1 class="mb-3">수거차 관리</h1>
+
+<div class="row g-3">
+    @foreach (var t in _trucks)
+    {
+        <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+            <a class="bin-card" href="trucks/@t.Code">
+                <div class="bin-card-header">
+                    <span class="bin-id">@t.Code</span>
+                    <span class="status @t.StatusClass">@t.Status</span>
+                </div>
+                <div class="bin-name">@t.Driver 기사</div>
+                <div class="bin-meta">담당 권역: @t.Area</div>
+                <div class="fill-bar">
+                    <div class="fill" style="width:@(t.Load)%"></div>
+                </div>
+                <div class="bin-meta">적재량 @t.Load% · 처리 @(t.Done)건</div>
+            </a>
+        </div>
+    }
+</div>
+
+@code {
+    private record Truck(string Code, string Driver, string Area, int Load, int Done, string Status, string StatusClass);
+
+    private readonly List<Truck> _trucks = new()
+    {
+        new("T-01", "김민수", "강남 1권역", 42, 18, "운행중", "ok"),
+        new("T-02", "이서연", "강남 2권역", 88, 24, "복귀중", "warn"),
+        new("T-03", "박지훈", "송파 1권역", 0, 0, "대기", "off"),
+        new("T-04", "최유나", "송파 2권역", 61, 12, "운행중", "ok"),
+        new("T-05", "정도현", "서초 1권역", 15, 5, "운행중", "ok"),
+        new("T-06", "한지민", "서초 2권역", 95, 27, "긴급", "danger"),
+    };
+}

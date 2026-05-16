@@ -1,0 +1,39 @@
+@page "/alerts"
+
+<PageTitle>알림 센터</PageTitle>
+
+<h1 class="mb-1">알림 센터</h1>
+<div class="page-sub mb-3">실시간 쓰레기통 이상 알림 및 수거 대기 목록</div>
+
+<div class="row g-3">
+    @foreach (var a in _alerts)
+    {
+        <div class="col-12 col-lg-6">
+            <div class="alert-card @a.LevelClass">
+                <div class="alert-card-header">
+                    <div class="alert-meta">
+                        <span class="status @a.LevelClass">@a.Level</span>
+                        <span class="bin-id">@a.BinId</span>
+                    </div>
+                    <span class="alert-time">@a.Time</span>
+                </div>
+                <div class="alert-msg">@a.Message</div>
+                <div class="bin-meta">@a.Location</div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private record Alert(string BinId, string Level, string LevelClass, string Message, string Location, string Time);
+
+    private readonly List<Alert> _alerts = new()
+    {
+        new("BIN-003", "긴급", "danger", "적재율 93% 초과 — 즉시 수거 필요",      "강남구 삼성동 테헤란로",    "10분 전"),
+        new("BIN-001", "주의", "warn",   "적재율 82% — 수거 권장",                "강남구 역삼동 역삼역 1번",  "23분 전"),
+        new("BIN-006", "주의", "warn",   "적재율 77% — 수거 권장",                "송파구 잠실동 잠실역",      "41분 전"),
+        new("BIN-008", "오프라인", "off","기기 응답 없음 — 점검 요망",             "송파구 방이동 한강공원",    "1시간 전"),
+        new("BIN-011", "긴급", "danger", "적재율 96% 초과 — 즉시 수거 필요",      "서초구 서초동 교대역",      "1시간 전"),
+        new("BIN-015", "정보", "ok",     "정기 수거 완료",                         "강남구 대치동 선릉역",      "2시간 전"),
+    };
+}

@@ -1,0 +1,59 @@
+@page "/bins/{Id:int}"
+
+<title>쓰레기통 #@Id</title>
+
+<div class="d-flex align-items-center gap-2 mb-3">
+    <a href="bins" class="back-link">← 목록</a>
+    <h1 class="m-0">쓰레기통 #@Id 상세</h1>
+</div>
+
+<div class="row g-3 mb-3">
+    <div class="col-6 col-md-3">
+        <div class="stat-card">
+            <div class="stat-label">현재 적재율</div>
+            <div class="stat-value">73%</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-card">
+            <div class="stat-label">금일 투입 횟수</div>
+            <div class="stat-value">142</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-card">
+            <div class="stat-label">마지막 수거</div>
+            <div class="stat-value">3h 전</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-card">
+            <div class="stat-label">상태</div>
+            <div class="stat-value">정상</div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-12 col-lg-7">
+        <div class="panel">
+            <h2 class="panel-title">적재량 추이</h2>
+            <div class="chart-placeholder">차트 영역 (추후 연결)</div>
+        </div>
+    </div>
+    <div class="col-12 col-lg-5">
+        <div class="panel">
+            <h2 class="panel-title">기본 정보</h2>
+            <dl class="info-list">
+                <dt>위치</dt><dd>서울특별시 강남구 역삼동</dd>
+                <dt>설치일</dt><dd>2024-03-12</dd>
+                <dt>모델</dt><dd>SB-200X</dd>
+                <dt>담당 수거차</dt><dd>T-04</dd>
+            </dl>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public int Id { get; set; }
+}

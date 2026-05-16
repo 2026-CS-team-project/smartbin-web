@@ -1,0 +1,41 @@
+@page "/bins"
+
+<PageTitle>쓰레기통 관리</PageTitle>
+
+<h1 class="mb-3">쓰레기통 관리</h1>
+
+<div class="row g-3">
+    @foreach (var bin in _bins)
+    {
+        <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+            <a class="bin-card" href="@($"bins/{bin.Id}")">
+                <div class="bin-card-header">
+                    <span class="bin-id">#@bin.Id</span>
+                    <span class="status @bin.StatusClass">@bin.Status</span>
+                </div>
+                <div class="bin-name">@bin.Name</div>
+                <div class="bin-meta">@bin.Location</div>
+                <div class="fill-bar">
+                    <div class="fill" style="width:@(bin.Fill)%"></div>
+                </div>
+                <div class="bin-meta">적재율 @bin.Fill%</div>
+            </a>
+        </div>
+    }
+</div>
+
+@code {
+    private record Bin(int Id, string Name, string Location, int Fill, string Status, string StatusClass);
+
+    private readonly List<Bin> _bins = new()
+    {
+        new(1, "역삼역 1번 출구", "강남구 역삼동", 82, "수거 필요", "warn"),
+        new(2, "강남대로 중앙", "강남구 역삼동", 35, "정상", "ok"),
+        new(3, "테헤란로 빌딩 앞", "강남구 삼성동", 91, "긴급", "danger"),
+        new(4, "선릉역 4번 출구", "강남구 대치동", 12, "정상", "ok"),
+        new(5, "코엑스 동문", "강남구 삼성동", 64, "정상", "ok"),
+        new(6, "잠실역 환승센터", "송파구 잠실동", 77, "수거 필요", "warn"),
+        new(7, "올림픽공원 평화의문", "송파구 방이동", 23, "정상", "ok"),
+        new(8, "한강공원 잠실", "송파구 잠실동", 5, "오프라인", "off"),
+    };
+}
