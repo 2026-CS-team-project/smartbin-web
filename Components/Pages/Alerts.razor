@@ -26,10 +26,11 @@
 
 @code {
     private record Alert(string BinId, string Level, string LevelClass, string Message, string Location, string Time);
+    // 쓰레기통 ID, 알림 종류, 알림 메시지 색상, 위치, 시간
 
     private readonly List<Alert> _alerts = new()
     {
-        new("BIN-003", "긴급", "danger", "적재율 93% 초과 — 즉시 수거 필요",      "강남구 삼성동 테헤란로",    "10분 전"),
+        new("쓰레기통 ID", "알림 종류", "danger", "적재율 93% 초과 — 즉시 수거 필요",      "x, y, z 좌표",    "10분 전"),
         new("BIN-001", "주의", "warn",   "적재율 82% — 수거 권장",                "강남구 역삼동 역삼역 1번",  "23분 전"),
         new("BIN-006", "주의", "warn",   "적재율 77% — 수거 권장",                "송파구 잠실동 잠실역",      "41분 전"),
         new("BIN-008", "오프라인", "off","기기 응답 없음 — 점검 요망",             "송파구 방이동 한강공원",    "1시간 전"),

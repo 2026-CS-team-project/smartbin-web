@@ -8,9 +8,9 @@
     @foreach (var t in _trucks)
     {
         <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
-            <a class="bin-card" href="trucks/@t.Code">
+            <a class="bin-card" href="trucks/@t.Id">
                 <div class="bin-card-header">
-                    <span class="bin-id">@t.Code</span>
+                    <span class="bin-id">@t.Id</span>
                     <span class="status @t.StatusClass">@t.Status</span>
                 </div>
                 <div class="bin-name">@t.Driver 기사</div>
@@ -25,7 +25,8 @@
 </div>
 
 @code {
-    private record Truck(string Code, string Driver, string Area, int Load, int Done, string Status, string StatusClass);
+    private record Truck(string Id, string Driver, string Area, int Load, int Done, string Status, string StatusClass);
+    // 수거차 Id, 담당 기사, 담당 권역, 적재량, 처리 건수, 상태, 상태 클래스
 
     private readonly List<Truck> _trucks = new()
     {

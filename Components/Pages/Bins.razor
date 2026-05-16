@@ -26,10 +26,11 @@
 
 @code {
     private record Bin(int Id, string Name, string Location, int Fill, string Status, string StatusClass);
+    // 쓰레기통 ID, 쓰레기통 이름, 쓰레기통 위치, 적재율, 상태, 상태 클래스
 
     private readonly List<Bin> _bins = new()
     {
-        new(1, "역삼역 1번 출구", "강남구 역삼동", 82, "수거 필요", "warn"),
+        new(1, "쓰레기통 ID", "x, y, z 좌표", 82, "수거 필요", "warn"),
         new(2, "강남대로 중앙", "강남구 역삼동", 35, "정상", "ok"),
         new(3, "테헤란로 빌딩 앞", "강남구 삼성동", 91, "긴급", "danger"),
         new(4, "선릉역 4번 출구", "강남구 대치동", 12, "정상", "ok"),
