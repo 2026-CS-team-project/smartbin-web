@@ -1,60 +1,84 @@
-@page "/bins/{Id:int}"
+@page "/bins/{Id}"
+@rendermode InteractiveServer
+@inject SmartBin.Services.BinService BinService
 
-<title>쓰레기통 #@Id</title>
+<PageTitle>@(_bin?.binName ?? Id)</PageTitle>
 
 <div class="d-flex align-items-center gap-2 mb-3">
     <a href="bins" class="back-link">← 목록</a>
-    <h1 class="m-0">쓰레기통 #@Id 상세보기</h1>
+    <h1 class="m-0">@(_bin?.binName ?? Id) 상세보기</h1>
 </div>
 
-<div class="row g-3 mb-3">
-    <div class="col-6 col-md-3">
-        <div class="stat-card">
-            <div class="stat-label">현재 적재상태</div>
-            <div class="stat-value">full or not full</div>
+@if (_loading)
+{
+    <p>불러오는 중...</p>
+}
+else if (_bin is null)
+{
+    <p>해당 쓰레기통을 찾을 수 없습니다.</p>
+}
+else
+{
+    <div class="row g-3 mb-3">
+        <div class="col-6 col-md-3">
+            <div class="stat-card">
+                <div class="stat-label">현재 적재 상태</div>
+                <div class="stat-value">
+                    <span class="status @_bin.StatusClass">@_bin.StatusText</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="stat-card">
+                <div class="stat-label">적재율</div>
+                <div class="stat-value">@(_bin.DisplayFillLevel)<span class="unit">%</span></div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="stat-card">
+                <div class="stat-label">X 좌표</div>
+                <div class="stat-value">@_bin.X.ToString("F2")</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="stat-card">
+                <div class="stat-label">Z 좌표</div>
+                <div class="stat-value">@_bin.Z.ToString("F2")</div>
+            </div>
         </div>
     </div>
-    <div class="col-6 col-md-3">
-        <div class="stat-card">
-            <div class="stat-label">금일 수거 횟수</div>
-            <div class="stat-value">5회</div>
-        </div>
-    </div>
-    <div class="col-6 col-md-3">
-        <div class="stat-card">
-            <div class="stat-label">마지막 수거</div>
-            <div class="stat-value">3h 전</div>
-        </div>
-    </div>
-    <div class="col-6 col-md-3">
-        <div class="stat-card">
-            <div class="stat-label">상태</div>
-            <div class="stat-value">정상</div>
-        </div>
-    </div>
-</div>
 
-<div class="row g-3">
-    <!-- 쓰레기통 상세 시뮬레이션 -->
-    <div class="col-12 col-lg-7">
-        <div class="panel">
-            <h2 class="panel-title">상세 시뮬레이션</h2>
-            <div class="chart-placeholder">Unity WebGL 시뮬레이션 영역 (추후 연결)</div>
+    <div class="row g-3">
+        <div class="col-12 col-lg-7">
+            <div class="panel">
+                <h2 class="panel-title">상세 시뮬레이션</h2>
+                <div class="chart-placeholder">Unity WebGL 시뮬레이션 영역 (추후 연결)</div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-5">
+            <div class="panel">
+                <h2 class="panel-title">쓰레기통 정보</h2>
+                <dl class="info-list">
+                    <dt>쓰레기통 ID</dt><dd>@_bin.BinId</dd>
+                    <dt>위치</dt><dd>X: @_bin.X.ToString("F2") / Y: @_bin.Y.ToString("F2") / Z: @_bin.Z.ToString("F2")</dd>
+                    <dt>적재율</dt><dd>@(_bin.DisplayFillLevel)%</dd>
+                    <dt>적재 상태</dt><dd>@_bin.StatusText</dd>
+                    <dt>마지막 업데이트</dt><dd>@_bin.UpdatedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")</dd>
+                </dl>
+            </div>
         </div>
     </div>
-    <!-- 기본 정보 -->
-    <div class="col-12 col-lg-5">
-        <div class="panel">
-            <h2 class="panel-title">쓰레기통 정보</h2>
-            <dl class="info-list">
-                <dt>위치</dt><dd>x, y, z 좌표</dd>
-                <dt>설치일</dt><dd>2024-03-12</dd>
-                <dt>담당 수거차</dt><dd>T-04</dd>
-            </dl>
-        </div>
-    </div>
-</div>
+}
 
 @code {
-    [Parameter] public int Id { get; set; }
+    [Parameter] public string Id { get; set; } = "";
+
+    private SmartBin.Models.Bin? _bin;
+    private bool _loading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _bin = await BinService.GetByIdAsync(Id);
+        _loading = false;
+    }
 }

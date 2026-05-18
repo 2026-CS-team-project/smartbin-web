@@ -1,40 +1,44 @@
 @page "/trucks"
+@inject SmartBin.Services.TruckService TruckService
 
 <PageTitle>수거차 관리</PageTitle>
 
 <h1 class="mb-3">수거차 관리</h1>
 
-<div class="row g-3">
-    @foreach (var t in _trucks)
-    {
-        <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
-            <a class="bin-card" href="trucks/@t.Id">
-                <div class="bin-card-header">
-                    <span class="bin-id">@t.Id</span>
-                    <span class="status @t.StatusClass">@t.Status</span>
-                </div>
-                <div class="bin-name">@t.Driver 기사</div>
-                <div class="bin-meta">담당 권역: @t.Area</div>
-                <div class="fill-bar">
-                    <div class="fill" style="width:@(t.Load)%"></div>
-                </div>
-                <div class="bin-meta">적재량 @t.Load% · 처리 @(t.Done)건</div>
-            </a>
-        </div>
-    }
-</div>
+@if (_loading)
+{
+    <p>불러오는 중...</p>
+}
+else
+{
+    <div class="row g-3">
+        @foreach (var truck in _trucks)
+        {
+            <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+                <a class="bin-card" href="trucks/@truck.TruckId">
+                    <div class="bin-card-header">
+                        <span class="bin-id">@truck.TruckId</span>
+                        <span class="status @truck.StatusClass">@truck.StatusText</span>
+                    </div>
+                    <div class="bin-name">@truck.DisplayName</div>
+                    <div class="bin-meta">X: @truck.X.ToString("F1") / Y: @truck.Y.ToString("F1") / Z: @truck.Z.ToString("F1")</div>
+                    <div class="fill-bar">
+                        <div class="fill" style="width:@(truck.LoadPercent)%"></div>
+                    </div>
+                    <div class="bin-meta">적재 @truck.LoadPercent% · 금일 수거 @(truck.CollectedCount)건</div>
+                </a>
+            </div>
+        }
+    </div>
+}
 
 @code {
-    private record Truck(string Id, string Driver, string Area, int Load, int Done, string Status, string StatusClass);
-    // 수거차 Id, 담당 기사, 담당 권역, 적재량, 처리 건수, 상태, 상태 클래스
+    private List<SmartBin.Models.Truck> _trucks = new();
+    private bool _loading = true;
 
-    private readonly List<Truck> _trucks = new()
+    protected override async Task OnInitializedAsync()
     {
-        new("T-01", "김민수", "강남 1권역", 42, 18, "운행중", "ok"),
-        new("T-02", "이서연", "강남 2권역", 88, 24, "복귀중", "warn"),
-        new("T-03", "박지훈", "송파 1권역", 0, 0, "대기", "off"),
-        new("T-04", "최유나", "송파 2권역", 61, 12, "운행중", "ok"),
-        new("T-05", "정도현", "서초 1권역", 15, 5, "운행중", "ok"),
-        new("T-06", "한지민", "서초 2권역", 95, 27, "긴급", "danger"),
-    };
+        _trucks = await TruckService.GetAllAsync();
+        _loading = false;
+    }
 }

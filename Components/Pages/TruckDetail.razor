@@ -1,156 +1,99 @@
 @page "/trucks/{Code}"
+@rendermode InteractiveServer
+@inject SmartBin.Services.TruckService TruckService
 
-<PageTitle>수거차 @Code</PageTitle>
+<PageTitle>@(_truck?.DisplayName ?? Code)</PageTitle>
 
 <div class="d-flex align-items-center gap-2 mb-3">
     <a href="trucks" class="back-link">← 목록</a>
-    <h1 class="m-0">수거차 @Code 상세보기</h1>
-    <span class="status @_truck.StatusClass ms-2">@_truck.Status</span>
+    <h1 class="m-0">@(_truck?.DisplayName ?? Code) 상세보기</h1>
+    @if (_truck is not null)
+    {
+        <span class="status @_truck.StatusClass ms-2">@_truck.StatusText</span>
+    }
 </div>
 
-<div class="row g-3 mb-3">
-    <div class="col-6 col-md-3">
-        <div class="stat-card">
-            <div class="stat-icon icon-blue">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M1 7h13v10H1z" /><path d="M14 10h4l3 3v4h-7z" />
-                    <circle cx="5.5" cy="18.5" r="2" /><circle cx="17.5" cy="18.5" r="2" />
-                </svg>
+@if (_loading)
+{
+    <p>불러오는 중...</p>
+}
+else if (_truck is null)
+{
+    <p>해당 수거차를 찾을 수 없습니다.</p>
+}
+else
+{
+    <div class="row g-3 mb-3">
+        <div class="col-6 col-md-3">
+            <div class="stat-card">
+                <div class="stat-icon icon-blue">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M1 7h13v10H1z" /><path d="M14 10h4l3 3v4h-7z" />
+                        <circle cx="5.5" cy="18.5" r="2" /><circle cx="17.5" cy="18.5" r="2" />
+                    </svg>
+                </div>
+                <div>
+                    <div class="stat-label">현재 적재량</div>
+                    <div class="stat-value">@_truck.LoadPercent<span class="unit">%</span></div>
+                </div>
             </div>
-            <div>
-                <div class="stat-label">현재 적재량</div>
-                <div class="stat-value">@(_truck.Load)<span class="unit">%</span></div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="stat-card">
+                <div class="stat-icon icon-green">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 6h18" /><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                        <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                    </svg>
+                </div>
+                <div>
+                    <div class="stat-label">금일 수거 처리</div>
+                    <div class="stat-value">@_truck.CollectedCount<span class="unit">건</span></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="stat-card">
+                <div class="stat-icon icon-sky">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 1 1 18 0z" />
+                        <circle cx="12" cy="10" r="3" />
+                    </svg>
+                </div>
+                <div>
+                    <div class="stat-label">현재 목적지</div>
+                    <div class="stat-value" style="font-size:1.1rem">@(string.IsNullOrEmpty(_truck.Destination) ? "—" : _truck.Destination)</div>
+                </div>
             </div>
         </div>
     </div>
-    <div class="col-6 col-md-3">
-        <div class="stat-card">
-            <div class="stat-icon icon-green">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M3 6h18" /><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
-                </svg>
-            </div>
-            <div>
-                <div class="stat-label">금일 수거 처리</div>
-                <div class="stat-value">@(_truck.Done)<span class="unit">건</span></div>
-            </div>
-        </div>
-    </div>
-    <div class="col-6 col-md-3">
-        <div class="stat-card">
-            <div class="stat-icon icon-sky">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 1 1 18 0z" />
-                    <circle cx="12" cy="10" r="3" />
-                </svg>
-            </div>
-            <div>
-                <div class="stat-label">현재 목적지</div>
-                <div class="stat-value" style="font-size:1.1rem">@_truck.DestBin</div>
-            </div>
-        </div>
-    </div>
-    <div class="col-6 col-md-3">
-        <div class="stat-card">
-            <div class="stat-icon icon-red">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="10" />
-                    <polyline points="12 6 12 12 16 14" />
-                </svg>
-            </div>
-            <div>
-                <div class="stat-label">도착 예정</div>
-                <div class="stat-value" style="font-size:1.1rem">@_truck.Eta</div>
-            </div>
-        </div>
-    </div>
-</div>
 
-<div class="row g-3">
-    <div class="col-12 col-lg-5">
-        <div class="panel">
-            <h2 class="panel-title">기본 정보</h2>
-            <dl class="info-list">
-                <dt>차량 코드</dt><dd>@_truck.Code</dd>
-                <dt>담당 기사</dt><dd>@(_truck.Driver) 기사</dd>
-                <dt>담당 권역</dt><dd>@_truck.Area</dd>
-                <dt>차량 번호</dt><dd>@_truck.PlateNo</dd>
-                <dt>차량 모델</dt><dd>@_truck.Model</dd>
-                <dt>최대 적재</dt><dd>@_truck.MaxLoad kg</dd>
-            </dl>
-        </div>
-    </div>
-    <div class="col-12 col-lg-7">
-        <div class="panel">
-            <h2 class="panel-title">수거 대기 목록</h2>
-            <div class="route-list">
-                @foreach (var (bin, idx) in _truck.Queue.Select((b, i) => (b, i + 1)))
-                {
-                    <div class="route-item @(bin.IsCurrent ? "current" : "")">
-                        <div class="route-seq">@idx</div>
-                        <div class="route-body">
-                            <div class="route-bin">@bin.BinId <span class="bin-id ms-1">@bin.Location</span></div>
-                            <div class="fill-bar mt-1">
-                                <div class="fill @(bin.Fill >= 90 ? "fill-danger" : bin.Fill >= 70 ? "fill-warn" : "")" style="width:@(bin.Fill)%"></div>
-                            </div>
-                            <div class="bin-meta mt-1">적재율 @bin.Fill%</div>
-                        </div>
-                        <span class="status @bin.StatusClass">@bin.Status</span>
-                    </div>
-                }
+    <div class="row g-3">
+        <div class="col-12 col-lg-5">
+            <div class="panel">
+                <h2 class="panel-title">기본 정보</h2>
+                <dl class="info-list">
+                    <dt>차량 ID</dt><dd>@_truck.TruckId</dd>
+                    <dt>상태</dt><dd>@_truck.StatusText</dd>
+                    <dt>최대 적재</dt><dd>@(_truck.MaxLoad * 50) kg</dd>
+                    <dt>현재 수거량</dt><dd>@(_truck.CollectedCount * 50) kg</dd>
+                    <dt>위치</dt><dd>X: @_truck.X.ToString("F2") / Y: @_truck.Y.ToString("F2") / Z: @_truck.Z.ToString("F2")</dd>
+                    <dt>마지막 업데이트</dt><dd>@_truck.UpdatedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")</dd>
+                </dl>
             </div>
         </div>
     </div>
-</div>
+}
 
 @code {
     [Parameter] public string Code { get; set; } = "";
 
-    private TruckInfo _truck = default!;
+    private SmartBin.Models.Truck? _truck;
+    private bool _loading = true;
 
-    private record QueueBin(string BinId, string Location, int Fill, string Status, string StatusClass, bool IsCurrent = false);
-
-    private record TruckInfo(
-        string Code, string Driver, string Area, string PlateNo, string Model,
-        int MaxLoad, int Load, int Done,
-        string DestBin, string Eta,
-        string Status, string StatusClass,
-        List<QueueBin> Queue);
-
-    private static readonly Dictionary<string, TruckInfo> _data = new()
+    protected override async Task OnInitializedAsync()
     {
-        ["T-01"] = new("T-01", "김민수", "강남 1권역", "서울 12가 3456", "현대 메가트럭", 5000, 42, 18, "BIN-003", "약 8분", "운행중", "ok",
-            new() {
-                new("BIN-003", "강남구 삼성동 테헤란로",   91, "긴급",    "danger", true),
-                new("BIN-007", "강남구 역삼동 은행사거리", 74, "주의",    "warn"),
-                new("BIN-012", "강남구 논현동 학동역",     38, "정상",    "ok"),
-            }),
-        ["T-02"] = new("T-02", "이서연", "강남 2권역", "서울 34나 7890", "기아 봉고3", 3500, 88, 24, "차고지", "약 15분", "복귀중", "warn",
-            new() {
-                new("BIN-005", "강남구 대치동 대치사거리", 62, "정상",    "ok"),
-                new("BIN-009", "강남구 삼성동 코엑스 앞",  45, "정상",    "ok"),
-            }),
-        ["T-03"] = new("T-03", "박지훈", "송파 1권역", "서울 56다 1234", "현대 포터2",  2500,  0,  0, "—",     "대기중",  "대기",   "off", new()),
-        ["T-04"] = new("T-04", "최유나", "송파 2권역", "서울 78라 5678", "현대 메가트럭", 5000, 61, 12, "BIN-006", "약 5분", "운행중", "ok",
-            new() {
-                new("BIN-006", "송파구 잠실동 잠실역",     77, "주의",    "warn", true),
-                new("BIN-014", "송파구 방이동 올림픽공원", 55, "정상",    "ok"),
-                new("BIN-019", "송파구 석촌동 석촌호수",   30, "정상",    "ok"),
-            }),
-        ["T-05"] = new("T-05", "정도현", "서초 1권역", "서울 90마 9012", "기아 봉고3",  3500, 15,  5, "BIN-021", "약 12분", "운행중", "ok",
-            new() {
-                new("BIN-021", "서초구 서초동 교대역",     82, "주의",    "warn", true),
-                new("BIN-025", "서초구 잠원동 한강진역",   48, "정상",    "ok"),
-            }),
-        ["T-06"] = new("T-06", "한지민", "서초 2권역", "서울 11바 3456", "현대 메가트럭", 5000, 95, 27, "차고지", "약 3분",  "긴급",   "danger",
-            new() {
-                new("BIN-008", "송파구 방이동 한강공원",    5, "오프라인", "off"),
-            }),
-    };
-
-    protected override void OnParametersSet()
-    {
-        _truck = _data.TryGetValue(Code, out var t) ? t : _data["T-01"];
+        _truck = await TruckService.GetByIdAsync(Code);
+        _loading = false;
     }
 }

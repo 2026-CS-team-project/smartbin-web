@@ -431,3 +431,6 @@ FodyWeavers.xsd
 # macOS
 .DS_Store
 **/.DS_Store
+
+# Secrets
+appsettings.json
