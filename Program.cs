@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.StaticFiles;
 using SmartBin.Components;
 using SmartBin.Services;
 
@@ -24,10 +25,32 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
     app.UseHsts();
+    app.UseHttpsRedirection();
 }
 
-app.UseHttpsRedirection();
-app.UseStaticFiles();
+
+var contentTypeProvider = new FileExtensionContentTypeProvider();
+contentTypeProvider.Mappings[".gz"] = "application/octet-stream";
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    ContentTypeProvider = contentTypeProvider,
+    OnPrepareResponse = ctx =>
+    {
+        var fileName = ctx.File.Name;
+        if (fileName.EndsWith(".gz"))
+        {
+            ctx.Context.Response.Headers.Append("Content-Encoding", "gzip");
+            if (fileName.EndsWith(".wasm.gz"))
+                ctx.Context.Response.ContentType = "application/wasm";
+            else if (fileName.EndsWith(".js.gz"))
+                ctx.Context.Response.ContentType = "application/javascript";
+            else
+                ctx.Context.Response.ContentType = "application/octet-stream";
+        }
+    }
+});
+
 app.UseAntiforgery();
 
 app.MapRazorComponents<App>()

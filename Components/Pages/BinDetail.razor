@@ -52,7 +52,10 @@ else
         <div class="col-12 col-lg-7">
             <div class="panel">
                 <h2 class="panel-title">상세 시뮬레이션</h2>
-                <div class="chart-placeholder">Unity WebGL 시뮬레이션 영역 (추후 연결)</div>
+                <iframe src="@WebGlUrl"
+                        title="Unity WebGL 시뮬레이션"
+                        allow="fullscreen"
+                        style="width:100%; height:560px; border:0; border-radius:8px; background:#0b1220;"></iframe>
             </div>
         </div>
         <div class="col-12 col-lg-5">
@@ -75,6 +78,22 @@ else
 
     private SmartBin.Models.Bin? _bin;
     private bool _loading = true;
+
+    private string WebGlUrl
+    {
+        get
+        {
+            var token = ExtractBinNumber(_bin?.binName) ?? ExtractBinNumber(_bin?.BinId) ?? (_bin?.BinId ?? Id);
+            return $"/webgl/index.html?bin={Uri.EscapeDataString(token)}";
+        }
+    }
+
+    private static string? ExtractBinNumber(string? source)
+    {
+        if (string.IsNullOrEmpty(source)) return null;
+        var match = System.Text.RegularExpressions.Regex.Match(source, @"(\d+)\s*$");
+        return match.Success ? match.Groups[1].Value : null;
+    }
 
     protected override async Task OnInitializedAsync()
     {

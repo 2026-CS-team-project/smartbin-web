@@ -37,6 +37,7 @@ public class Bin : BaseModel
 
     public string StatusText => (IsFull || FillLevel >= 90) ? "즉시 수거 필요"
         : FillLevel >= 50 ? "수거 필요"
+        : FillLevel >= 30 ? "여유"
         : "비어있음";
 
     public string StatusClass => (IsFull || FillLevel >= 90) ? "danger"
