@@ -17,9 +17,31 @@ var supabase = new Supabase.Client(supabaseUrl, supabaseKey, new Supabase.Supaba
 await supabase.InitializeAsync();
 builder.Services.AddSingleton(supabase);
 builder.Services.AddScoped<BinService>();
-builder.Services.AddScoped<TruckService>();
+builder.Services.AddSingleton<TruckService>();
+builder.Services.AddSingleton<AlertService>();
+builder.Services.AddHostedService<AlertBackgroundService>();
 
 var app = builder.Build();
+
+// Purge rows left behind by previous simulation runs so the tables don't grow
+// unbounded. Each run uses a fresh simulation_id; only the most recent is kept.
+using (var scope = app.Services.CreateScope())
+{
+    try
+    {
+        var binService = scope.ServiceProvider.GetRequiredService<BinService>();
+        var truckService = scope.ServiceProvider.GetRequiredService<TruckService>();
+        var binRows = await binService.PurgeOldSimulationsAsync();
+        var truckRows = await truckService.PurgeOldSimulationsAsync();
+        app.Logger.LogInformation(
+            "옛 시뮬레이션 정리 완료: 쓰레기통 {BinRows}행, 수거차 {TruckRows}행 삭제",
+            binRows, truckRows);
+    }
+    catch (Exception ex)
+    {
+        app.Logger.LogWarning(ex, "옛 시뮬레이션 정리 실패 (앱은 계속 시작됨)");
+    }
+}
 
 if (!app.Environment.IsDevelopment())
 {

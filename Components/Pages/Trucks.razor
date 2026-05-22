@@ -25,7 +25,7 @@ else
                     <div class="fill-bar">
                         <div class="fill" style="width:@(truck.LoadPercent)%"></div>
                     </div>
-                    <div class="bin-meta">적재 @truck.LoadPercent% · 금일 수거 @(truck.CollectedCount)건</div>
+                    <div class="bin-meta">적재 @truck.LoadPercent% · 수거 횟수 @TruckService.GetTripCount(truck.TruckId)회 · 현재 @(truck.CollectedCount * 50)kg</div>
                 </a>
             </div>
         }

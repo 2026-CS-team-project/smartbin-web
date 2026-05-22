@@ -21,7 +21,7 @@ else
                         <span class="bin-id">@bin.BinId</span>
                         <span class="status @bin.StatusClass">@bin.StatusText</span>
                     </div>
-                    <div class="bin-name">@bin.binName</div>
+                    <div class="bin-name">@bin.DisplayName</div>
                     <div class="bin-meta">X: @bin.X.ToString("F1") / Y: @bin.Y.ToString("F1") / Z: @bin.Z.ToString("F1")</div>
                     <div class="fill-bar">
                         <div class="fill" style="width:@(bin.DisplayFillLevel)%"></div>

@@ -2,11 +2,11 @@
 @rendermode InteractiveServer
 @inject SmartBin.Services.BinService BinService
 
-<PageTitle>@(_bin?.binName ?? Id)</PageTitle>
+<PageTitle>@(_bin?.DisplayName ?? Id)</PageTitle>
 
 <div class="d-flex align-items-center gap-2 mb-3">
     <a href="bins" class="back-link">← 목록</a>
-    <h1 class="m-0">@(_bin?.binName ?? Id) 상세보기</h1>
+    <h1 class="m-0">@(_bin?.DisplayName ?? Id) 상세보기</h1>
 </div>
 
 @if (_loading)
@@ -52,10 +52,12 @@ else
         <div class="col-12 col-lg-7">
             <div class="panel">
                 <h2 class="panel-title">상세 시뮬레이션</h2>
-                <iframe src="@WebGlUrl"
-                        title="Unity WebGL 시뮬레이션"
-                        allow="fullscreen"
-                        style="width:100%; height:560px; border:0; border-radius:8px; background:#0b1220;"></iframe>
+                <div id="sim-anchor" data-bin="@BinNumber"
+                     style="width:100%; height:560px; border-radius:8px; overflow:hidden; background:#0b1220; position:relative;">
+                    <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.3);font-size:0.9rem;pointer-events:none;">
+                        시뮬레이션 로딩 중...
+                    </div>
+                </div>
             </div>
         </div>
         <div class="col-12 col-lg-5">
@@ -79,20 +81,14 @@ else
     private SmartBin.Models.Bin? _bin;
     private bool _loading = true;
 
-    private string WebGlUrl
+    private string BinNumber
     {
         get
         {
-            var token = ExtractBinNumber(_bin?.binName) ?? ExtractBinNumber(_bin?.BinId) ?? (_bin?.BinId ?? Id);
-            return $"/webgl/index.html?bin={Uri.EscapeDataString(token)}";
+            var match = System.Text.RegularExpressions.Regex.Match(
+                _bin?.binName ?? _bin?.BinId ?? Id, @"(\d+)\s*$");
+            return match.Success ? match.Groups[1].Value : "0";
         }
-    }
-
-    private static string? ExtractBinNumber(string? source)
-    {
-        if (string.IsNullOrEmpty(source)) return null;
-        var match = System.Text.RegularExpressions.Regex.Match(source, @"(\d+)\s*$");
-        return match.Success ? match.Groups[1].Value : null;
     }
 
     protected override async Task OnInitializedAsync()

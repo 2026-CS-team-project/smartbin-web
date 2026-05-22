@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using Postgrest.Attributes;
 using Postgrest.Models;
 
@@ -32,6 +33,15 @@ public class Bin : BaseModel
 
     [Column("updated_at")]
     public DateTime UpdatedAt { get; set; }
+
+    public string DisplayName
+    {
+        get
+        {
+            var match = Regex.Match(binName, @"\d+$");
+            return match.Success ? $"쓰레기통 {match.Value}" : binName;
+        }
+    }
 
     public int DisplayFillLevel => IsFull ? 90 : FillLevel;
 

@@ -150,6 +150,30 @@ h1 {
     margin-bottom: 18px;
 }
 
+/* Dashboard fits exactly in the viewport — no page scroll. */
+.dashboard {
+    height: calc(100vh - 1.1rem);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.dashboard .page-header {
+    flex: 0 0 auto;
+}
+
+.dashboard .map-card {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    margin-bottom: 0px;
+}
+
+.dashboard .row {
+    flex: 0 0 auto;
+    margin-bottom: 20px;
+}
+
 .map-placeholder {
     position: relative;
     width: 100%;
@@ -480,4 +504,32 @@ a.bin-card:hover {
 
 .fill-bar .fill-warn   { background: #eab308; }
 .fill-bar .fill-danger { background: #ef4444; }
+
+.alert-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 20px;
+    color: #9ca3af;
+    text-align: center;
+    gap: 12px;
+}
+
+.alert-empty svg {
+    width: 48px;
+    height: 48px;
+    opacity: 0.35;
+}
+
+.alert-empty p {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #6b7280;
+    margin: 0;
+}
+
+.alert-empty span {
+    font-size: 0.85rem;
+}
 

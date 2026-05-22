@@ -42,7 +42,17 @@ public class Truck : BaseModel
         get
         {
             var match = Regex.Match(TruckId, @"\d+$");
-            return match.Success ? $"Truck {match.Value}" : TruckId;
+            return match.Success ? $"트럭 {match.Value}" : TruckId;
+        }
+    }
+
+    // 0-based Unity index (sorted alphabetically): TruckId 끝 숫자 - 1
+    public int TruckIndex
+    {
+        get
+        {
+            var match = Regex.Match(TruckId, @"\d+$");
+            return match.Success ? int.Parse(match.Value) - 1 : 0;
         }
     }
 

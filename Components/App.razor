@@ -14,6 +14,22 @@
 
 <body>
     <Routes />
+    <!--
+        sim-frame-host is declared here — in App.razor, the static HTML shell that the
+        server renders for every page request. Blazor's enhanced navigation morphing
+        algorithm (idiomorph) sees this element in BOTH the old DOM and every new HTML
+        response, so it patches (preserves) it in-place instead of removing it.
+        That means the Unity WebGL iframe is never recreated across navigations or
+        SignalR reconnections, so the simulation never resets.
+    -->
+    <div id="sim-frame-host"
+         style="position:fixed;top:0;left:0;width:100%;height:100%;visibility:visible;pointer-events:none;z-index:-1;">
+        <iframe src="/webgl/index.html"
+                title="SmartBin Simulation"
+                allow="fullscreen"
+                scrolling="no"
+                style="width:100%;height:100%;border:0;display:block;background:#0b1220;"></iframe>
+    </div>
     <script src="_framework/blazor.web.js"></script>
     <script src="js/persistentSim.js"></script>
 </body>

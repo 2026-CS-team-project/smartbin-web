@@ -1,40 +1,77 @@
 @page "/alerts"
+@rendermode InteractiveServer
+@implements IDisposable
+@inject SmartBin.Services.AlertService AlertService
 
-<PageTitle>알림 센터</PageTitle>
+<title>SmartBin - 알림 센터</title>
 
-<h1 class="mb-1">알림 센터</h1>
-<div class="page-sub mb-3">실시간 쓰레기통 이상 알림 및 수거 대기 목록</div>
-
-<div class="row g-3">
-    @foreach (var a in _alerts)
+<div class="page-header">
+    <div>
+        <h1 class="page-title">알림 센터</h1>
+        <div class="page-sub">쓰레기통 적재율 임계값(70% / 90%) 초과 알림</div>
+    </div>
+    @if (AlertService.UnreadCount > 0)
     {
-        <div class="col-12 col-lg-6">
-            <div class="alert-card @a.LevelClass">
-                <div class="alert-card-header">
-                    <div class="alert-meta">
-                        <span class="status @a.LevelClass">@a.Level</span>
-                        <span class="bin-id">@a.BinId</span>
-                    </div>
-                    <span class="alert-time">@a.Time</span>
-                </div>
-                <div class="alert-msg">@a.Message</div>
-                <div class="bin-meta">@a.Location</div>
-            </div>
+        <div class="page-actions">
+            <button class="btn-primary-soft" @onclick="AlertService.MarkAllRead">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12" />
+                </svg>
+                모두 읽음 처리
+            </button>
         </div>
     }
 </div>
 
-@code {
-    private record Alert(string BinId, string Level, string LevelClass, string Message, string Location, string Time);
-    // 쓰레기통 ID, 알림 종류, 알림 메시지 색상, 위치, 시간
+@{
+    var alerts = AlertService.GetAlerts();
+}
 
-    private readonly List<Alert> _alerts = new()
+@if (!alerts.Any())
+{
+    <div class="alert-empty">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+        </svg>
+        <p>아직 발생한 알림이 없습니다.</p>
+        <span>쓰레기통 적재율이 70% 또는 90%를 초과하면 여기에 표시됩니다.</span>
+    </div>
+}
+else
+{
+    <div class="row g-3">
+        @foreach (var alert in alerts)
+        {
+            <div class="col-12 col-lg-6">
+                <div class="alert-card @(alert.Threshold >= 90 ? "danger" : "warn")">
+                    <div class="alert-card-header">
+                        <div class="alert-meta">
+                            <span class="status @(alert.Threshold >= 90 ? "danger" : "warn")">
+                                @(alert.Threshold >= 90 ? "긴급" : "주의")
+                            </span>
+                            <span class="bin-id">@alert.BinId</span>
+                        </div>
+                        <span class="alert-time">@alert.Timestamp.ToString("MM/dd HH:mm:ss")</span>
+                    </div>
+                    <div class="alert-msg">@alert.BinName — 적재율 @alert.FillLevel% 도달</div>
+                    <div class="bin-meta">임계값 @alert.Threshold% 초과 감지</div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    protected override void OnInitialized()
     {
-        new("쓰레기통 ID", "알림 종류", "danger", "적재율 93% 초과 — 즉시 수거 필요",      "x, y, z 좌표",    "10분 전"),
-        new("BIN-001", "주의", "warn",   "적재율 82% — 수거 권장",                "강남구 역삼동 역삼역 1번",  "23분 전"),
-        new("BIN-006", "주의", "warn",   "적재율 77% — 수거 권장",                "송파구 잠실동 잠실역",      "41분 전"),
-        new("BIN-008", "오프라인", "off","기기 응답 없음 — 점검 요망",             "송파구 방이동 한강공원",    "1시간 전"),
-        new("BIN-011", "긴급", "danger", "적재율 96% 초과 — 즉시 수거 필요",      "서초구 서초동 교대역",      "1시간 전"),
-        new("BIN-015", "정보", "ok",     "정기 수거 완료",                         "강남구 대치동 선릉역",      "2시간 전"),
-    };
+        AlertService.OnChanged += HandleChanged;
+    }
+
+    private void HandleChanged() => InvokeAsync(StateHasChanged);
+
+    public void Dispose()
+    {
+        AlertService.OnChanged -= HandleChanged;
+    }
 }
