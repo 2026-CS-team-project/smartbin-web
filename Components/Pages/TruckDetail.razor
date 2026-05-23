@@ -12,6 +12,14 @@
     {
         <span class="status @_truck.StatusClass ms-2">@_truck.StatusText</span>
     }
+    <button class="btn-primary-soft ms-auto" @onclick="ManualRefreshAsync" disabled="@_refreshing">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="23 4 23 10 17 10" />
+            <polyline points="1 20 1 14 7 14" />
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+        </svg>
+        @(_refreshing ? "불러오는 중..." : "새로고침")
+    </button>
 </div>
 
 @if (_loading)
@@ -115,6 +123,7 @@ else
 
     private SmartBin.Models.Truck? _truck;
     private bool _loading = true;
+    private bool _refreshing = false;
     private readonly CancellationTokenSource _cts = new();
 
     protected override async Task OnInitializedAsync()
@@ -136,6 +145,13 @@ else
             }
         }
         catch (OperationCanceledException) { }
+    }
+
+    private async Task ManualRefreshAsync()
+    {
+        _refreshing = true;
+        _truck = await TruckService.GetByIdAsync(Code);
+        _refreshing = false;
     }
 
     public void Dispose()

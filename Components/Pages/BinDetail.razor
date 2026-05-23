@@ -7,6 +7,14 @@
 <div class="d-flex align-items-center gap-2 mb-3">
     <a href="bins" class="back-link">← 목록</a>
     <h1 class="m-0">@(_bin?.DisplayName ?? Id) 상세보기</h1>
+    <button class="btn-primary-soft ms-auto" @onclick="RefreshAsync" disabled="@_refreshing">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="23 4 23 10 17 10" />
+            <polyline points="1 20 1 14 7 14" />
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+        </svg>
+        @(_refreshing ? "불러오는 중..." : "새로고침")
+    </button>
 </div>
 
 @if (_loading)
@@ -65,6 +73,7 @@ else
                 <h2 class="panel-title">쓰레기통 정보</h2>
                 <dl class="info-list">
                     <dt>쓰레기통 ID</dt><dd>@_bin.BinId</dd>
+                    <dt>이름</dt><dd>@_bin.binName</dd>
                     <dt>위치</dt><dd>X: @_bin.X.ToString("F2") / Y: @_bin.Y.ToString("F2") / Z: @_bin.Z.ToString("F2")</dd>
                     <dt>적재율</dt><dd>@(_bin.DisplayFillLevel)%</dd>
                     <dt>적재 상태</dt><dd>@_bin.StatusText</dd>
@@ -80,6 +89,7 @@ else
 
     private SmartBin.Models.Bin? _bin;
     private bool _loading = true;
+    private bool _refreshing = false;
 
     private string BinNumber
     {
@@ -95,5 +105,12 @@ else
     {
         _bin = await BinService.GetByIdAsync(Id);
         _loading = false;
+    }
+
+    private async Task RefreshAsync()
+    {
+        _refreshing = true;
+        _bin = await BinService.GetByIdAsync(Id);
+        _refreshing = false;
     }
 }
