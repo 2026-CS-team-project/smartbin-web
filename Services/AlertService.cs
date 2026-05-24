@@ -63,7 +63,11 @@ public class AlertService
 
     public void MarkAllRead()
     {
-        lock (_lock) _unreadCount = 0;
+        lock (_lock)
+        {
+            _alerts.Clear();
+            _unreadCount = 0;
+        }
         OnChanged?.Invoke();
     }
 }

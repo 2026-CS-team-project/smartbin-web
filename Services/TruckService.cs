@@ -118,23 +118,5 @@ public class TruckService
             .FirstOrDefault();
     }
 
-    // Deletes rows belonging to every simulation except the most recent one.
-    // Returns the number of rows removed.
-    public async Task<int> PurgeOldSimulationsAsync()
-    {
-        var all = (await _supabase.From<Truck>().Get()).Models;
-        var latestSimId = LatestSimulationId(all);
-        if (latestSimId is null) return 0;
 
-        var staleCount = all.Count(t => t.SimulationId != latestSimId);
-        if (staleCount == 0) return 0;
-
-        await _supabase.From<Truck>()
-            .Filter("simulation_id", Postgrest.Constants.Operator.NotEqual, latestSimId)
-            .Delete();
-        return staleCount;
-    }
-
-    private static string? LatestSimulationId(IEnumerable<Truck> trucks) =>
-        trucks.OrderByDescending(t => t.UpdatedAt).FirstOrDefault()?.SimulationId;
 }
