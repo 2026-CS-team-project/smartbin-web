@@ -91,6 +91,17 @@ else
     </div>
 
     <div class="row g-3">
+        <div class="col-12 col-lg-7">
+            <div class="panel">
+                <h2 class="panel-title">실시간 수거차 상태</h2>
+                <div id="sim-anchor" data-bin="@(-_truck.TruckIndex - 1)"
+                     style="width:100%; height:560px; border-radius:8px; overflow:hidden; background:#0b1220; position:relative;">
+                    <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.3);font-size:0.9rem;pointer-events:none;">
+                        시뮬레이션 로딩 중...
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="col-12 col-lg-5">
             <div class="panel">
                 <h2 class="panel-title">기본 정보</h2>
@@ -102,17 +113,6 @@ else
                     <dt>위치</dt><dd>X: @_truck.X.ToString("F2") / Y: @_truck.Y.ToString("F2") / Z: @_truck.Z.ToString("F2")</dd>
                     <dt>마지막 업데이트</dt><dd>@_truck.UpdatedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")</dd>
                 </dl>
-            </div>
-        </div>
-        <div class="col-12 col-lg-7">
-            <div class="panel">
-                <h2 class="panel-title">수거차 시뮬레이션</h2>
-                <div id="sim-anchor" data-bin="@(-_truck.TruckIndex - 1)"
-                     style="width:100%; height:560px; border-radius:8px; overflow:hidden; background:#0b1220; position:relative;">
-                    <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.3);font-size:0.9rem;pointer-events:none;">
-                        시뮬레이션 로딩 중...
-                    </div>
-                </div>
             </div>
         </div>
     </div>
